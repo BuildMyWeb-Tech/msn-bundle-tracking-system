@@ -1,0 +1,23 @@
+{
+  "name": "bts-backend",
+  "version": "1.0.0",
+  "description": "MSN Bundle Tracking System - Backend",
+  "main": "server.js",
+  "engines": { "node": "20.x" },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "mssql": "^11.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
