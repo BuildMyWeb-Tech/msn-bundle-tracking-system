@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BundleTopBar from "../../components/BundleTopBar";
 import { Eye, ScanLine } from "lucide-react";
-
+import BundleBottomNav from "../../components/BundleBottomNav";
 const PROCESS_OPTIONS = ["Combo", "Cutting", "Stitching", "Finishing"];
 const PARTY_OPTIONS   = ["Combo", "Party A", "Party B", "Party C"];
 
@@ -85,11 +85,13 @@ export default function BundleReceiptSearch() {
           </table>
         </div>
 
-        <button className="btn btn-primary" style={{ width:"100%", marginTop:16 }}
+              <button className="btn btn-primary" style={{ width:"100%", marginTop:16 }}
           disabled={!shown} onClick={onScan}>
           <ScanLine size={15} /> Scan
         </button>
       </div>
+
+      <BundleBottomNav />
     </div>
   );
 }

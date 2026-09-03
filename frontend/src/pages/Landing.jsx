@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { PackageOpen, PackageCheck, LogOut } from "lucide-react";
-
+import BundleBottomNav from "../components/BundleBottomNav";
 const TILES = [
   { key:"issue",   label:"Bundle Issue",   icon:PackageOpen,  route:"/bundle-issue",   match:"issue" },
   { key:"receipt", label:"Bundle Receipt", icon:PackageCheck, route:"/bundle-receipt", match:"receipt" },
@@ -49,11 +49,13 @@ export default function Landing() {
         })}
       </div>
 
-      <div style={{ padding:16 }}>
+          <div style={{ padding:16 }}>
         <button className="btn btn-ghost-danger" style={{ width:"100%", padding:12 }} onClick={onLogout}>
           <LogOut size={15} /> Log Out
         </button>
       </div>
+
+      <BundleBottomNav />
     </div>
   );
 }

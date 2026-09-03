@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import BundleTopBar from "../../components/BundleTopBar";
 import BarcodeScanner from "../../components/BarcodeScanner";
 import { ScanLine, Save, Trash2 } from "lucide-react";
-
+import BundleBottomNav from "../../components/BundleBottomNav";
 export default function BundleReceiptEntry() {
   const { state } = useLocation();
   const navigate  = useNavigate();
@@ -85,8 +85,8 @@ export default function BundleReceiptEntry() {
           </table>
         </div>
       </div>
-
       {scanning && <BarcodeScanner onScan={addRow} onClose={() => setScanning(false)} />}
+      <BundleBottomNav />
     </div>
   );
 }

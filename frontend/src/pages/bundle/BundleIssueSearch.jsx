@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BundleTopBar from "../../components/BundleTopBar";
 import { Search, ScanLine } from "lucide-react";
-
+import BundleBottomNav from "../../components/BundleBottomNav";
 const PROCESS_OPTIONS = ["Combo", "Cutting", "Stitching", "Finishing"];
 
 // Mock rows returned once a PO is searched — replace with real SP once available
@@ -84,11 +84,13 @@ export default function BundleIssueSearch() {
           </table>
         </div>
 
-        <button className="btn btn-primary" style={{ width:"100%", marginTop:16 }}
+              <button className="btn btn-primary" style={{ width:"100%", marginTop:16 }}
           disabled={!searched} onClick={onScan}>
           <ScanLine size={15} /> Scan
         </button>
       </div>
+
+      <BundleBottomNav />
     </div>
   );
 }
