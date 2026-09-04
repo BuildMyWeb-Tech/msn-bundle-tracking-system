@@ -7,6 +7,7 @@ import BundleIssueSearch from "./pages/bundle/BundleIssueSearch";
 import BundleIssueEntry from "./pages/bundle/BundleIssueEntry";
 import BundleReceiptSearch from "./pages/bundle/BundleReceiptSearch";
 import BundleReceiptEntry from "./pages/bundle/BundleReceiptEntry";
+import InstallPrompt from "./components/InstallPrompt";
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -51,6 +52,7 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <AppRoutes />
+        <InstallPrompt />
       </AuthProvider>
     </BrowserRouter>
   );
