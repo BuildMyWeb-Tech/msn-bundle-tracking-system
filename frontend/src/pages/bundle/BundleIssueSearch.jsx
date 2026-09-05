@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BundleTopBar from "../../components/BundleTopBar";
-import { Search, ScanLine } from "lucide-react";
+import BarcodeScanner from "../../components/BarcodeScanner";
+import { Search, ScanLine, Camera } from "lucide-react";
 import BundleBottomNav from "../../components/BundleBottomNav";
-const PROCESS_OPTIONS = ["Combo", "Cutting", "Stitching", "Finishing"];
+import { getPono, getPonoProcess } from "../../services/bundleService";
 
 // Mock rows returned once a PO is searched — replace with real SP once available
 const MOCK_ROWS = [
@@ -14,18 +15,58 @@ const MOCK_ROWS = [
 
 export default function BundleIssueSearch() {
   const navigate = useNavigate();
-  const [poNo, setPoNo]       = useState("");
-  const [process, setProcess] = useState("Combo");
-  const [party, setParty]     = useState("");
-  const [rows, setRows]       = useState([]);
-  const [searched, setSearched] = useState(false);
+  const [poNo, setPoNo]             = useState("");
+  const [process, setProcess]       = useState("Combo");
+  const [party, setParty]           = useState("");
+  const [processOptions, setProcessOptions] = useState(["Combo"]);
+  const [processRows, setProcessRows]       = useState([]);
+  const [rows, setRows]             = useState([]);
+  const [searched, setSearched]     = useState(false);
+  const [loading, setLoading]       = useState(false);
+  const [error, setError]           = useState("");
+  const [showScanner, setShowScanner] = useState(false);
 
-  const onSearch = () => {
-    if (!poNo.trim()) return;
-    // TODO: replace with real PO lookup SP
-    setParty("Auto-Party Pvt Ltd");
-    setRows(MOCK_ROWS);
-    setSearched(true);
+  const runSearch = async (value) => {
+    const po = (value ?? poNo).trim();
+    if (!po) return;
+
+    setLoading(true);
+    setError("");
+    try {
+      await getPono(po); // validates the PO No exists
+      const { data: procRows } = await getPonoProcess(po);
+
+      const distinctProcess = [...new Set((procRows || []).map(r => r.Process))];
+      setProcessRows(procRows || []);
+      setProcessOptions(["Combo", ...distinctProcess]);
+      setProcess("Combo");
+      setParty("");
+
+      setPoNo(po);
+      // TODO: replace with real style/size SP once available
+      setRows(MOCK_ROWS);
+      setSearched(true);
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "PO No not found");
+      setProcessOptions(["Combo"]);
+      setProcessRows([]);
+      setParty("");
+      setRows([]);
+      setSearched(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onProcessChange = (value) => {
+    setProcess(value);
+    const match = processRows.find(r => r.Process === value);
+    setParty(match ? match.Party : "");
+  };
+
+  const onScanBarcode = (text) => {
+    setPoNo(text);
+    runSearch(text);
   };
 
   const onScan = () => {
@@ -39,16 +80,25 @@ export default function BundleIssueSearch() {
       <div style={{ padding:16 }}>
         <div className="form-group" style={{ display:"flex", gap:8, alignItems:"flex-end" }}>
           <div style={{ flex:1 }}>
-            <label className="form-label">Po No</label>
-            <input className="form-input" value={poNo} onChange={e => setPoNo(e.target.value)} placeholder="Enter PO No" />
+            <label className="form-label" htmlFor="issue-poNo">Po No</label>
+            <input id="issue-poNo" className="form-input" value={poNo} onChange={e => setPoNo(e.target.value)}
+              placeholder="Enter PO No" onKeyDown={e => e.key === "Enter" && runSearch()} />
           </div>
-          <button className="btn btn-primary" onClick={onSearch}><Search size={14} />Search</button>
+          <button type="button" className="btn btn-ghost" title="Scan PO Barcode"
+            onClick={() => setShowScanner(true)}>
+            <Camera size={14} />
+          </button>
+          <button className="btn btn-primary" disabled={loading} onClick={() => runSearch()}>
+            <Search size={14} />Search
+          </button>
         </div>
+
+        {error && <div className="login-error">{error}</div>}
 
         <div className="form-group">
           <label className="form-label">Process</label>
-          <select className="form-input" value={process} onChange={e => setProcess(e.target.value)}>
-            {PROCESS_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
+          <select className="form-input" value={process} onChange={e => onProcessChange(e.target.value)}>
+            {processOptions.map(p => <option key={p} value={p}>{p}</option>)}
           </select>
         </div>
 
@@ -89,6 +139,10 @@ export default function BundleIssueSearch() {
           <ScanLine size={15} /> Scan
         </button>
       </div>
+
+      {showScanner && (
+        <BarcodeScanner onScan={onScanBarcode} onClose={() => setShowScanner(false)} />
+      )}
 
       <BundleBottomNav />
     </div>

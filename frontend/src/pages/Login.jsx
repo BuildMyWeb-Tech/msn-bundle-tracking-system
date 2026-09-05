@@ -66,22 +66,22 @@ export default function Login() {
 
         <form onSubmit={onSubmit} noValidate>
           <div className="form-group">
-            <label className="form-label">Company Code</label>
-            <input name="companyCode" className="form-input"
+            <label className="form-label" htmlFor="login-companyCode">Company Code</label>
+            <input id="login-companyCode" name="companyCode" className="form-input"
               value={form.companyCode} onChange={onChange} />
           </div>
 
           <div className="form-group">
-            <label className="form-label">Username <span className="req">*</span></label>
-            <input name="username" className="form-input"
+            <label className="form-label" htmlFor="login-username">Username <span className="req">*</span></label>
+            <input id="login-username" name="username" className="form-input"
               value={form.username} onChange={onChange}
               placeholder="Username" autoCapitalize="none" autoFocus />
           </div>
 
           <div className="form-group">
-            <label className="form-label">Password <span className="req">*</span></label>
+            <label className="form-label" htmlFor="login-password">Password <span className="req">*</span></label>
             <div className="pw-wrap">
-              <input name="password" type={showPw ? "text" : "password"} className="form-input"
+              <input id="login-password" name="password" type={showPw ? "text" : "password"} className="form-input"
                 value={form.password} onChange={onChange} placeholder="Password"
                 style={{ paddingRight:42 }} />
               <button type="button" className="pw-toggle" onClick={() => setShowPw(s => !s)}>
