@@ -80,7 +80,7 @@ export default function BundleReceiptSearch() {
     <div style={{ minHeight:"100vh", background:"var(--bg)" }}>
       <BundleTopBar title="Bundle Tracking" subtitle="Bundle Receipt" />
 
-      <div style={{ padding:16 }}>
+      <div style={{ padding:"16px 16px 84px" }}>
         <div className="form-group" style={{ display:"flex", gap:8, alignItems:"flex-end" }}>
           <div style={{ flex:1 }}>
             <label className="form-label" htmlFor="receipt-poNo">Po No</label>

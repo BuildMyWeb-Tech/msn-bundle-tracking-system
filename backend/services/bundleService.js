@@ -39,4 +39,12 @@ async function getPonoProcess(pono) {
   }
 }
 
-module.exports = { getPono, getPonoProcess };
+async function getIssuedGrid(pono, processuid) {
+  try {
+    return await repo.getIssuedGrid(pono, processuid);
+  } catch (err) {
+    throw wrapDbError(err);
+  }
+}
+
+module.exports = { getPono, getPonoProcess, getIssuedGrid };

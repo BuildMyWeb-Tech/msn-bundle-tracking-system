@@ -14,4 +14,13 @@ async function getPonoProcess(pono) {
   return result.recordset || [];
 }
 
-module.exports = { getPonoList, getPonoProcess };
+async function getIssuedGrid(pono, processuid) {
+  const pool = await getPool();
+  const result = await pool.request()
+    .input("pono", sql.NVarChar(sql.MAX), String(pono))
+    .input("processuid", sql.Int, Number(processuid))
+    .execute("PR_App_Bundle_Issued_LoadGrid");
+  return result.recordset || [];
+}
+
+module.exports = { getPonoList, getPonoProcess, getIssuedGrid };

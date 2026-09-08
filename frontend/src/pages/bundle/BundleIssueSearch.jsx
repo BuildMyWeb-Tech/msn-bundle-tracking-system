@@ -4,14 +4,7 @@ import BundleTopBar from "../../components/BundleTopBar";
 import BarcodeScanner from "../../components/BarcodeScanner";
 import { Search, ScanLine, Camera } from "lucide-react";
 import BundleBottomNav from "../../components/BundleBottomNav";
-import { getPono, getPonoProcess } from "../../services/bundleService";
-
-// Mock rows returned once a PO is searched — replace with real SP once available
-const MOCK_ROWS = [
-  { styleNo:"STY-1001", size:"S", issued:0, pending:120 },
-  { styleNo:"STY-1001", size:"M", issued:0, pending:180 },
-  { styleNo:"STY-1001", size:"L", issued:0, pending:150 },
-];
+import { getPono, getPonoProcess, getIssuedGrid } from "../../services/bundleService";
 
 export default function BundleIssueSearch() {
   const navigate = useNavigate();
@@ -23,6 +16,7 @@ export default function BundleIssueSearch() {
   const [rows, setRows]             = useState([]);
   const [searched, setSearched]     = useState(false);
   const [loading, setLoading]       = useState(false);
+  const [gridLoading, setGridLoading] = useState(false);
   const [error, setError]           = useState("");
   const [showScanner, setShowScanner] = useState(false);
 
@@ -43,8 +37,7 @@ export default function BundleIssueSearch() {
       setParty("");
 
       setPoNo(po);
-      // TODO: replace with real style/size SP once available
-      setRows(MOCK_ROWS);
+      setRows([]); // grid loads once a specific process is picked
       setSearched(true);
     } catch (err) {
       setError(err.response?.data?.message || err.message || "PO No not found");
@@ -58,10 +51,30 @@ export default function BundleIssueSearch() {
     }
   };
 
-  const onProcessChange = (value) => {
+  const onProcessChange = async (value) => {
     setProcess(value);
     const match = processRows.find(r => r.Process === value);
     setParty(match ? match.Party : "");
+
+    if (!match) { setRows([]); return; }
+
+    setGridLoading(true);
+    setError("");
+    try {
+      const { data: gridRows } = await getIssuedGrid(poNo, match.uid);
+      setRows((gridRows || []).map(r => ({
+        styleNo: r.StyleNo,
+        size: r.Size,
+        component: r.ComponentName,
+        issued: r.BundleIssued,
+        pending: r.Pending,
+      })));
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Failed to load grid");
+      setRows([]);
+    } finally {
+      setGridLoading(false);
+    }
   };
 
   const onScanBarcode = (text) => {
@@ -77,7 +90,7 @@ export default function BundleIssueSearch() {
     <div style={{ minHeight:"100vh", background:"var(--bg)" }}>
       <BundleTopBar title="Bundle Tracking" subtitle="Bundle Issue" />
 
-      <div style={{ padding:16 }}>
+      <div style={{ padding:"16px 16px 84px" }}>
         <div className="form-group" style={{ display:"flex", gap:8, alignItems:"flex-end" }}>
           <div style={{ flex:1 }}>
             <label className="form-label" htmlFor="issue-poNo">Po No</label>
@@ -112,19 +125,25 @@ export default function BundleIssueSearch() {
             <thead>
               <tr style={{ background:"var(--accent)", color:"#000" }}>
                 <th style={{ padding:8, textAlign:"left" }}>Style No</th>
+                <th style={{ padding:8, textAlign:"left" }}>Component</th>
                 <th style={{ padding:8, textAlign:"left" }}>Size</th>
                 <th style={{ padding:8, textAlign:"right" }}>Issued</th>
                 <th style={{ padding:8, textAlign:"right" }}>Pending</th>
               </tr>
             </thead>
             <tbody>
-              {rows.length === 0 ? (
-                <tr><td colSpan={4} style={{ padding:16, textAlign:"center", color:"var(--text3)" }}>
-                  {searched ? "No records found" : "Search a PO to view sizes"}
+              {gridLoading ? (
+                <tr><td colSpan={5} style={{ padding:16, textAlign:"center", color:"var(--text3)" }}>Loading...</td></tr>
+              ) : rows.length === 0 ? (
+                <tr><td colSpan={5} style={{ padding:16, textAlign:"center", color:"var(--text3)" }}>
+                  {!searched ? "Search a PO to view sizes"
+                    : process === "Combo" ? "Select a process to view sizes"
+                    : "No records found"}
                 </td></tr>
               ) : rows.map((r, i) => (
                 <tr key={i} style={{ borderTop:"1px solid var(--border)" }}>
                   <td style={{ padding:8 }}>{r.styleNo}</td>
+                  <td style={{ padding:8 }}>{r.component}</td>
                   <td style={{ padding:8 }}>{r.size}</td>
                   <td style={{ padding:8, textAlign:"right" }}>{r.issued}</td>
                   <td style={{ padding:8, textAlign:"right" }}>{r.pending}</td>
