@@ -36,3 +36,18 @@ exports.getIssuedGrid = async (req, res, next) => {
     res.json({ success: true, data });
   } catch (err) { next(err); }
 };
+
+// POST /api/bundle/issue
+exports.issueBundle = async (req, res, next) => {
+  try {
+    const { uid, date, pono, processid, partyid, barcode } = req.body || {};
+    if (!date || !pono || !processid || !partyid || !barcode) {
+      return res.status(400).json({
+        success: false,
+        message: "date, pono, processid, partyid and barcode are required",
+      });
+    }
+    const data = await service.issueBundle({ uid, date, pono, processid, partyid, barcode });
+    res.json({ success: true, data });
+  } catch (err) { next(err); }
+};

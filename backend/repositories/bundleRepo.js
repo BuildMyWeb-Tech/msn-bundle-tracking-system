@@ -23,4 +23,17 @@ async function getIssuedGrid(pono, processuid) {
   return result.recordset || [];
 }
 
-module.exports = { getPonoList, getPonoProcess, getIssuedGrid };
+async function issueBundle({ uid, date, pono, processid, partyid, barcode }) {
+  const pool = await getPool();
+  const result = await pool.request()
+    .input("uid", sql.BigInt, uid)
+    .input("Date", sql.Date, date)
+    .input("PoNo", sql.NVarChar(40), String(pono))
+    .input("Processid", sql.Int, Number(processid))
+    .input("Partyid", sql.Int, Number(partyid))
+    .input("Barcode", sql.NVarChar(sql.MAX), String(barcode))
+    .execute("PR_IUD_Bundle_Issue");
+  return result.recordset?.[0] || null;
+}
+
+module.exports = { getPonoList, getPonoProcess, getIssuedGrid, issueBundle };

@@ -62,12 +62,17 @@ export default function BundleIssueSearch() {
     setError("");
     try {
       const { data: gridRows } = await getIssuedGrid(poNo, match.uid);
+      // SP column casing isn't consistent across POs (e.g. styleno/size vs StyleNo/Size) — read case-insensitively
+      const pick = (row, key) => {
+        const found = Object.keys(row).find(k => k.toLowerCase() === key.toLowerCase());
+        return found ? row[found] : undefined;
+      };
       setRows((gridRows || []).map(r => ({
-        styleNo: r.StyleNo,
-        size: r.Size,
-        component: r.ComponentName,
-        issued: r.BundleIssued,
-        pending: r.Pending,
+        styleNo: pick(r, "StyleNo"),
+        size: pick(r, "Size"),
+        component: pick(r, "ComponentName"),
+        issued: pick(r, "BundleIssued"),
+        pending: pick(r, "Pending"),
       })));
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Failed to load grid");
@@ -83,7 +88,11 @@ export default function BundleIssueSearch() {
   };
 
   const onScan = () => {
-    navigate("/bundle-issue/entry", { state:{ poNo, process, party } });
+    const match = processRows.find(r => r.Process === process);
+    if (!match) return;
+    navigate("/bundle-issue/entry", {
+      state:{ poNo, process, party, processUid: match.uid, partyUid: match.Partyuid },
+    });
   };
 
   return (
@@ -154,7 +163,7 @@ export default function BundleIssueSearch() {
         </div>
 
               <button className="btn btn-primary" style={{ width:"100%", marginTop:16 }}
-          disabled={!searched} onClick={onScan}>
+          disabled={!searched || process === "Combo"} onClick={onScan}>
           <ScanLine size={15} /> Scan
         </button>
       </div>

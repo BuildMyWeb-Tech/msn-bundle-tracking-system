@@ -47,4 +47,22 @@ async function getIssuedGrid(pono, processuid) {
   }
 }
 
-module.exports = { getPono, getPonoProcess, getIssuedGrid };
+async function issueBundle({ uid, date, pono, processid, partyid, barcode }) {
+  let row;
+  try {
+    row = await repo.issueBundle({ uid: uid || 0, date, pono, processid, partyid, barcode });
+  } catch (err) {
+    throw wrapDbError(err);
+  }
+
+  const responseCode = Number(row?.ResponseCode ?? row?.Response ?? 0);
+  if (responseCode !== 100) {
+    throw Object.assign(
+      new Error(row?.ResponseMessage || "Failed to save bundle issue"),
+      { status: 409 }
+    );
+  }
+  return { uid: row.Uid, message: row.ResponseMessage };
+}
+
+module.exports = { getPono, getPonoProcess, getIssuedGrid, issueBundle };
