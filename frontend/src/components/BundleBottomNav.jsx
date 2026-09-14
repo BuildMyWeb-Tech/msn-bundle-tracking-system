@@ -1,12 +1,10 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { PackageOpen, PackageCheck, ScanLine, ClipboardCheck } from "lucide-react";
+import { PackageOpen, PackageCheck } from "lucide-react";
 
 const TABS = [
-  { key: "issue-search",   label: "Issue",         icon: PackageOpen,     route: "/bundle-issue" },
-  { key: "issue-entry",    label: "Issue Entry",   icon: ScanLine,        route: "/bundle-issue/entry" },
-  { key: "receipt-search", label: "Receipt",       icon: PackageCheck,    route: "/bundle-receipt" },
-  { key: "receipt-entry",  label: "Receipt Entry", icon: ClipboardCheck,  route: "/bundle-receipt/entry" },
+  { key: "issue-search",   label: "Issue",   icon: PackageOpen,  route: "/bundle-issue" },
+  { key: "receipt-search", label: "Receipt", icon: PackageCheck, route: "/bundle-receipt" },
 ];
 
 export default function BundleBottomNav() {
@@ -23,7 +21,7 @@ export default function BundleBottomNav() {
     }}>
       {TABS.map(t => {
         const Icon = t.icon;
-        const active = pathname === t.route;
+        const active = pathname.startsWith(t.route);
         return (
           <button
             key={t.key}
