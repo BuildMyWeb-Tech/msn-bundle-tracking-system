@@ -8,6 +8,7 @@ import BundleIssueEntry from "./pages/bundle/BundleIssueEntry";
 import BundleReceiptSearch from "./pages/bundle/BundleReceiptSearch";
 import BundleReceiptEntry from "./pages/bundle/BundleReceiptEntry";
 import InstallPrompt from "./components/InstallPrompt";
+import PcWtApproval from "./pages/PcWtApproval";
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -42,6 +43,7 @@ function AppRoutes() {
       <Route path="/bundle-issue/entry" element={<ProtectedRoute><BundleIssueEntry /></ProtectedRoute>} />
       <Route path="/bundle-receipt" element={<ProtectedRoute><BundleReceiptSearch /></ProtectedRoute>} />
       <Route path="/bundle-receipt/entry" element={<ProtectedRoute><BundleReceiptEntry /></ProtectedRoute>} />
+      <Route path="/pc-wt-approval" element={<ProtectedRoute><PcWtApproval /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

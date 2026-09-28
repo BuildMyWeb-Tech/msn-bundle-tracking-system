@@ -1,11 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { PackageOpen, PackageCheck, LogOut } from "lucide-react";
+import { PackageOpen, PackageCheck, Scale, LogOut } from "lucide-react";
 import BundleBottomNav from "../components/BundleBottomNav";
 const TILES = [
-  { key:"issue",   label:"Bundle Issue",   icon:PackageOpen,  route:"/bundle-issue",   match:"issue" },
-  { key:"receipt", label:"Bundle Receipt", icon:PackageCheck, route:"/bundle-receipt", match:"receipt" },
+  { key:"issue",    label:"Bundle Issue",     icon:PackageOpen,  route:"/bundle-issue",   match:"issue" },
+  { key:"receipt",  label:"Bundle Receipt",   icon:PackageCheck, route:"/bundle-receipt", match:"receipt" },
+  { key:"approval", label:"Pc. Wt. Approval", icon:Scale,        route:"/pc-wt-approval", match:"pc. wt. approval" },
 ];
 
 export default function Landing() {
