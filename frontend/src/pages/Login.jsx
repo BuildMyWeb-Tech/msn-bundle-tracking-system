@@ -4,10 +4,12 @@ import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../services/authService";
 import { Eye, EyeOff, LogIn, AlertCircle } from "lucide-react";
 
+const COMPANY_CODE = "514670";
+
 export default function Login() {
   const navigate = useNavigate();
   const { login, isAuthenticated } = useAuth();
-  const [form, setForm] = useState({ companyCode: "514670", username: "", password: "" });
+  const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPw, setShowPw] = useState(false);
@@ -23,7 +25,6 @@ export default function Login() {
 
   const onSubmit = async e => {
     e.preventDefault();
-    if (!form.companyCode.trim()) return setError("Company code is required");
     if (!form.username.trim())    return setError("Username is required");
     if (!form.password)           return setError("Password is required");
 
@@ -32,10 +33,10 @@ export default function Login() {
       const res = await loginUser({
         username: form.username.trim(),
         password: form.password,
-        companyCode: form.companyCode.trim(),
+        companyCode: COMPANY_CODE,
       });
       if (res.success) {
-        login({ ...res.data, companyCode: form.companyCode.trim() });
+        login({ ...res.data, companyCode: COMPANY_CODE });
         navigate("/", { replace: true });
       } else {
         setError(res.message || "Invalid credentials");
@@ -50,8 +51,7 @@ export default function Login() {
       <div className="login-card">
         <div className="login-brand">
           <img src="/msn-logo.png" alt="MSN Infotec"
-            style={{ width:180, height:"auto", marginBottom:6 }}
-            onError={e => e.target.style.display = "none"} />
+            style={{ width:180, height:"auto", marginBottom:6 }} />
           <div style={{ fontSize:11, color:"var(--text3)", marginTop:4, textAlign:"center" }}>
             Bundle Tracking System
           </div>
@@ -65,12 +65,6 @@ export default function Login() {
         )}
 
         <form onSubmit={onSubmit} noValidate>
-          <div className="form-group">
-            <label className="form-label" htmlFor="login-companyCode">Company Code</label>
-            <input id="login-companyCode" name="companyCode" className="form-input"
-              value={form.companyCode} onChange={onChange} />
-          </div>
-
           <div className="form-group">
             <label className="form-label" htmlFor="login-username">Username <span className="req">*</span></label>
             <input id="login-username" name="username" className="form-input"

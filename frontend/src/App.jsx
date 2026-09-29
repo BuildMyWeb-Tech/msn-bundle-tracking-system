@@ -9,6 +9,8 @@ import BundleReceiptSearch from "./pages/bundle/BundleReceiptSearch";
 import BundleReceiptEntry from "./pages/bundle/BundleReceiptEntry";
 import InstallPrompt from "./components/InstallPrompt";
 import PcWtApproval from "./pages/PcWtApproval";
+import FabricData from "./pages/FabricData";
+import SurplusFabric from "./pages/SurplusFabric";
 import ComingSoon from "./pages/ComingSoon";
 
 function ProtectedRoute({ children }) {
@@ -45,6 +47,8 @@ function AppRoutes() {
       <Route path="/bundle-receipt" element={<ProtectedRoute><BundleReceiptSearch /></ProtectedRoute>} />
       <Route path="/bundle-receipt/entry" element={<ProtectedRoute><BundleReceiptEntry /></ProtectedRoute>} />
       <Route path="/pc-wt-approval" element={<ProtectedRoute><PcWtApproval /></ProtectedRoute>} />
+      <Route path="/fabric-data" element={<ProtectedRoute><FabricData /></ProtectedRoute>} />
+      <Route path="/surplus-fabric" element={<ProtectedRoute><SurplusFabric /></ProtectedRoute>} />
       <Route path="/coming-soon" element={<ProtectedRoute><ComingSoon /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

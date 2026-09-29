@@ -14,9 +14,9 @@ const KNOWN_MENUS = {
   "bundle receipt":   { icon:PackageCheck,    route:"/bundle-receipt" },
   "pc. wt. approval": { icon:Scale,           route:"/pc-wt-approval" },
   "quality data":     { icon:ClipboardCheck,  route:null },
-  "fabric data":      { icon:Layers,          route:null },
+  "fabric data":      { icon:Layers,          route:"/fabric-data" },
   "merch data":       { icon:ShoppingBag,     route:null },
-  "surplus fabric":   { icon:Boxes,           route:null },
+  "surplus fabric":   { icon:Boxes,           route:"/surplus-fabric" },
   "surplus garment":  { icon:Shirt,           route:null },
 };
 

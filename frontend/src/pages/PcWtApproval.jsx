@@ -11,14 +11,16 @@ export default function PcWtApproval() {
   const navigate = useNavigate();
   const [poNo, setPoNo]         = useState("");
   const [fabrics, setFabrics]   = useState([]);
-  const [selectedUid, setSelectedUid] = useState("");
+  const [selectedFabric, setSelectedFabric] = useState("");
   const [pcWt, setPcWt]         = useState("");
   const [loading, setLoading]   = useState(false);
   const [saving, setSaving]     = useState(false);
   const [error, setError]       = useState("");
   const [success, setSuccess]   = useState("");
 
-  const selected = fabrics.find(f => String(f.uid) === selectedUid);
+  // Keyed by fabric name, not uid — the SP now returns the same shared master uid for
+  // every fabric under a PO, so uid alone can't tell two fabric rows apart.
+  const selected = fabrics.find(f => f.fabric === selectedFabric);
 
   const onGet = async () => {
     const po = poNo.trim();
@@ -29,23 +31,23 @@ export default function PcWtApproval() {
     try {
       const { data } = await getFabricPcWt(po);
       setFabrics(data || []);
-      setSelectedUid("");
+      setSelectedFabric("");
       setPcWt("");
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Failed to load fabrics");
       setFabrics([]);
-      setSelectedUid("");
+      setSelectedFabric("");
       setPcWt("");
     } finally {
       setLoading(false);
     }
   };
 
-  const onFabricChange = (uid) => {
-    setSelectedUid(uid);
+  const onFabricChange = (fabricName) => {
+    setSelectedFabric(fabricName);
     setError("");
     setSuccess("");
-    const f = fabrics.find(x => String(x.uid) === uid);
+    const f = fabrics.find(x => x.fabric === fabricName);
     setPcWt(f && f.pcWt !== null && f.pcWt !== undefined ? Number(f.pcWt).toFixed(2) : "");
   };
 
@@ -60,7 +62,7 @@ export default function PcWtApproval() {
   const onReset = () => {
     setPoNo("");
     setFabrics([]);
-    setSelectedUid("");
+    setSelectedFabric("");
     setPcWt("");
     setError("");
     setSuccess("");
@@ -74,8 +76,10 @@ export default function PcWtApproval() {
     setError("");
     setSuccess("");
     try {
-      const { data } = await updateFabricPcWt({ uid: selected.uid, pcwt: Number(pcWt) });
-      setFabrics(prev => prev.map(f => f.uid === selected.uid ? { ...f, pcWt: Number(pcWt) } : f));
+      const { data } = await updateFabricPcWt({
+        pono: poNo.trim(), uid: selected.uid, pcwt: Number(pcWt), fabric: selected.fabric,
+      });
+      setFabrics(prev => prev.map(f => f.fabric === selected.fabric ? { ...f, pcWt: Number(pcWt) } : f));
       setSuccess(data.message || "Updated Successfully");
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Failed to update Pc Weight");
@@ -119,14 +123,13 @@ export default function PcWtApproval() {
 
         <div className="form-group">
           <label className="form-label" htmlFor="pcwt-fabric">Fabric</label>
-          <select id="pcwt-fabric" className="form-input" value={selectedUid}
+          <select id="pcwt-fabric" className="form-input" value={selectedFabric}
             onChange={e => onFabricChange(e.target.value)} disabled={fabrics.length === 0}>
             <option value="">{PLACEHOLDER}</option>
-            {fabrics.map(f => <option key={f.uid} value={String(f.uid)}>{f.fabric}</option>)}
+            {fabrics.map(f => <option key={f.fabric} value={f.fabric}>{f.fabric}</option>)}
           </select>
         </div>
 
-        {readOnlyField("Lot No", selected ? selected.lotNo : "")}
         {readOnlyField("Fabric Wt", selected ? selected.fabricWeight : "")}
         {readOnlyField("Fabric Rolls", selected ? selected.rolls : "")}
 
