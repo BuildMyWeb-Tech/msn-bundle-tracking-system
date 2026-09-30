@@ -17,7 +17,7 @@ const KNOWN_MENUS = {
   "fabric data":      { icon:Layers,          route:"/fabric-data" },
   "merch data":       { icon:ShoppingBag,     route:null },
   "surplus fabric":   { icon:Boxes,           route:"/surplus-fabric" },
-  "surplus garment":  { icon:Shirt,           route:null },
+  "surplus garment":  { icon:Shirt,           route:"/surplus-garment" },
 };
 
 const FALLBACK_TILES = [

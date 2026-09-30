@@ -9,6 +9,7 @@ require("./database/sqlConnection"); // init pool on boot
 const authRoutes      = require("./routes/authRoutes");
 const bundleRoutes    = require("./routes/bundleRoutes");
 const fabricRoutes    = require("./routes/fabricRoutes");
+const garmentRoutes   = require("./routes/garmentRoutes");
 const errorMiddleware = require("./middleware/errorMiddleware");
 
 const app = express();
@@ -21,6 +22,7 @@ app.get("/api/health", (req, res) => res.json({ ok: true, service: "bundle-track
 app.use("/api/auth", authRoutes);
 app.use("/api/bundle", bundleRoutes);
 app.use("/api/fabric", fabricRoutes);
+app.use("/api/garment", garmentRoutes);
 
 app.use(errorMiddleware);
 
